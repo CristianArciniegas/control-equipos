@@ -67,6 +67,9 @@ for i in range(1, int(cantidad_cajas) + 1):
     col1, col2 = st.columns(2)
     with col1:
         pc_activo = st.text_input(f"Computador - Activo Fijo (Caja {i})", key=f"pc_act_{i}")
+        mou_activo = st.text_input(f"Mouse - Marca (Caja {i})", key=f"mou_act_{i}")
+        
+        tec_activo = st.text_input(f"Teclado - Marca (Caja {i})", key=f"tec_act_{i}")
         lec_activo = st.text_input(f"Lector de Código - Activo Fijo (Caja {i})", key=f"lec_act_{i}")
         
         caj_activo = st.text_input(f"Cajón Monedero - Activo Fijo (Caja {i})", key=f"caj_act_{i}")
@@ -77,6 +80,9 @@ for i in range(1, int(cantidad_cajas) + 1):
 
     with col2:
         pc_estado = st.selectbox(f"Computador - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"pc_est_{i}")
+        mou_estado = st.selectbox(f"Mouse - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"mou_est_{i}")
+        
+        tec_estado = st.selectbox(f"Teclado - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"tec_est_{i}")
         lec_estado = st.selectbox(f"Lector de Código - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"lec_est_{i}")
         
         caj_estado = st.selectbox(f"Cajón Monedero - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"caj_est_{i}")
