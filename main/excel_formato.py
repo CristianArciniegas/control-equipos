@@ -38,7 +38,6 @@ MED = _side("medium", VERDE)
 THIN_V = _side("thin", VERDE)
 
 # ----------------------------------------------------------------- estructura
-# Grupos de la fila 5 (título, col inicio, col fin)
 GRUPOS = [
     ("POS I", "D", "O"), ("POS II", "P", "W"),
     ("PERIFÉRICOS POS 1", "X", "Z"), ("PERIFÉRICOS POS II", "AA", "AC"),
@@ -47,7 +46,6 @@ GRUPOS = [
     ("EQUIPOS DE RED", "AN", "AQ"), ("MONITOREO", "AR", "AS"),
 ]
 
-# Equipos de la fila 6 (título, col inicio, col fin). Si inicio == fin -> solo "Estado"
 EQUIPOS = [
     ("Computador", "D", "E"), ("Teléfono", "F", "G"), ("Biométrico", "H", "I"),
     ("Lector de Código", "J", "K"), ("Cajón Monedero", "L", "M"), ("Impresora POS", "N", "O"),
@@ -65,10 +63,8 @@ EQUIPOS = [
 OBS_INI, OBS_FIN = "AT", "AX"
 LAST_COL = ci("AX")
 
-# Columnas "Estado" (llevan lista desplegable, colores y conteo)
 COLS_ESTADO = [e[2] for e in EQUIPOS]
 
-# Primera columna de cada bloque -> borde izquierdo grueso
 INICIO_BLOQUE = {"F", "H", "J", "L", "N", "P", "R", "T", "V", "X", "AA", "AD", "AF",
                  "AH", "AJ", "AL", "AN", "AR", "AT"}
 
@@ -83,7 +79,6 @@ ANCHOS = {
     "AV": 17.71, "AW": 18.71, "AX": 26.71,
 }
 
-# Centro de costo, tienda, ciudad
 TIENDAS = [
     ("8B", "RIVIERA ARMENIA", "ARMENIA"),
     (13, "RIVIERA BUENAVISTA BARRANQUILLA", "BARRANQUILLA"),
@@ -124,39 +119,31 @@ TIENDAS = [
 LAST_ROW = FIRST_ROW + len(TIENDAS) - 1          # 42
 ROW_BUENO, ROW_REGULAR, ROW_MALO = LAST_ROW + 1, LAST_ROW + 2, LAST_ROW + 3
 
-# Mapeo del formulario -> columnas del Excel, por número de caja.
-# (columna_activo, columna_estado); None = esa columna no existe en el formato.
-# Caja 1 -> POS I, Caja 2 -> POS II. Lo que no tenga columna va a OBSERVACIONES.
 MAPA_CAJAS = {
-    1: {"PC": ("D", "E"), "Telefono": ("F", "G"), "Biometrico": ("H", "I"),
-        "Lector": ("J", "K"), "Cajon": ("L", "M"), "Impresora": ("N", "O"),
-        "Teclado": (None, "X"), "Mouse": (None, "Y"), "Pantalla": (None, "Z")},
-    2: {"PC": ("P", "Q"), "Lector": ("R", "S"), "Cajon": ("T", "U"),
-        "Impresora": ("V", "W"),
-        "Teclado": (None, "AA"), "Mouse": (None, "AB"), "Pantalla": (None, "AC")},
+    1: {"PC": ("D", "E"), "Pantalla": ("Z", "Z"), "Mouse": ("Y", "Y"), "Teclado": ("X", "X"),
+        "Lector": ("J", "K"), "Cajon": ("L", "M"), "Telefono": ("F", "G"),
+        "Biometrico": ("H", "I"), "Impresora": ("N", "O")},
+    2: {"PC": ("P", "Q"), "Pantalla": ("AC", "AC"), "Mouse": ("AB", "AB"), "Teclado": ("AA", "AA"),
+        "Lector": ("R", "S"), "Cajon": ("T", "U"), "Impresora": ("V", "W")},
 }
-NOMBRES = {"PC": "Computador", "Telefono": "Teléfono", "Biometrico": "Biométrico",
-           "Lector": "Lector", "Cajon": "Cajón", "Impresora": "Impresora POS",
-           "Teclado": "Teclado", "Mouse": "Mouse", "Pantalla": "Pantalla"}
+NOMBRES = {"PC": "Computador", "Pantalla": "Pantalla", "Mouse": "Mouse", "Teclado": "Teclado",
+           "Lector": "Lector", "Cajon": "Cajón", "Telefono": "Teléfono",
+           "Biometrico": "Biométrico", "Impresora": "Impresora POS"}
 
 
-# ----------------------------------------------------------------- helpers
 def _rango(ws, ini, fin, row_ini, row_fin=None):
     row_fin = row_fin or row_ini
-    for r in range(row_ini, row_fin + 1):
+    for r in range(row_fin, row_fin + 1):
         for c in range(ci(ini), ci(fin) + 1):
             yield ws.cell(r, c)
-
 
 def _bordes(cell, left=None, right=None, top=None, bottom=None):
     b = cell.border
     cell.border = Border(left=left or b.left, right=right or b.right,
                          top=top or b.top, bottom=bottom or b.bottom)
 
-
 def _encabezado_superior(ws):
     f_blanca = Font(name=FONT_MAIN, size=12, bold=True, color="FFFFFF")
-    # Título (A1:B3 combinado + relleno hasta E3)
     for c in _rango(ws, "A", "E", 1, 3):
         c.fill = _fill(VERDE)
         c.font = f_blanca
@@ -190,14 +177,12 @@ def _encabezado_superior(ws):
         ws[coord].alignment = Alignment(horizontal="left", vertical="center")
     ws["I1"].alignment = Alignment(vertical="center", wrap_text=True)
 
-
 def _encabezado_tabla(ws):
     f_grupo = Font(name=FONT_MAIN, size=12, bold=True, color="FFFFFF")
     f_equipo = Font(name=FONT_MAIN, size=12, bold=True, color=VERDE_TXT)
     f_sub = Font(name=FONT_MAIN, size=12, bold=True, color="444444")
     centro = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-    # --- A:C (C. COSTOS / TIENDA / CIUDAD), combinadas filas 5-7
     for col, txt in (("A", "C. COSTOS"), ("B", "TIENDA / SUCURSAL"), ("C", "CIUDAD")):
         ws.merge_cells(f"{col}5:{col}7")
         ws[f"{col}5"] = txt
@@ -210,7 +195,6 @@ def _encabezado_tabla(ws):
                     right=MED if col == "B" else THIN_V,
                     top=MED if r == 5 else None, bottom=MED if r == 7 else None)
 
-    # --- Fila 5: grupos
     for titulo, ini, fin in GRUPOS:
         if ini != fin:
             ws.merge_cells(f"{ini}5:{fin}5")
@@ -223,7 +207,6 @@ def _encabezado_tabla(ws):
         _bordes(ws[f"{ini}5"], left=MED)
         _bordes(ws[f"{fin}5"], right=MED)
 
-    # --- Fila 6 y 7: equipos y Activo / Estado
     for titulo, ini, fin in EQUIPOS:
         if ini != fin:
             ws.merge_cells(f"{ini}6:{fin}6")
@@ -247,7 +230,6 @@ def _encabezado_tabla(ws):
             for r in (6, 7):
                 _bordes(ws[f"{ini}{r}"], left=MED if ini != "D" else None)
 
-    # --- OBSERVACIONES (AT5:AX7)
     for c in _rango(ws, OBS_INI, OBS_FIN, 5, 7):
         c.fill = _fill(VERDE)
     ws.merge_cells(f"{OBS_INI}6:{OBS_FIN}7")
@@ -258,7 +240,6 @@ def _encabezado_tabla(ws):
         _bordes(c, top=MED if c.row == 5 else None,
                 left=MED if c.column == ci(OBS_INI) else None,
                 right=MED if c.column == ci(OBS_FIN) else None)
-
 
 def _cuerpo(ws):
     f_dato = Font(name=FONT_MAIN, size=12, color="333333")
@@ -280,7 +261,6 @@ def _cuerpo(ws):
         ws.cell(r, 2, tienda)
         ws.cell(r, 3, ciudad)
 
-        # Observaciones (AT:AX combinadas por fila)
         ws.merge_cells(f"{OBS_INI}{r}:{OBS_FIN}{r}")
         for c in _rango(ws, OBS_INI, OBS_FIN, r):
             c.font = Font(name=FONT_MAIN, size=12, color="333333")
@@ -290,10 +270,8 @@ def _cuerpo(ws):
             _bordes(c, top=THIN_SUB, bottom=THIN_SUB,
                     left=MED if c.column == ci(OBS_INI) else None,
                     right=MED if c.column == ci(OBS_FIN) else None)
-    # cierre inferior de la tabla
     for c in _rango(ws, OBS_INI, OBS_FIN, LAST_ROW):
         _bordes(c, bottom=MED)
-
 
 def _resumen(ws):
     estilos = [
@@ -323,7 +301,6 @@ def _resumen(ws):
             else:
                 ws.cell(r, col, "-")
 
-
 def _validaciones_y_colores(ws):
     dv = DataValidation(type="list", formula1='"BUENO,REGULAR,MALO,N/A"', allow_blank=True)
     ws.add_data_validation(dv)
@@ -346,9 +323,7 @@ def _validaciones_y_colores(ws):
                 formula=[f'NOT(ISERROR(SEARCH("{texto}",{col}{FIRST_ROW})))'],
             ))
 
-
 def crear_excel_formato(ruta):
-    """Crea el libro completo con el formato institucional y lo guarda en `ruta`."""
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = SHEET_NAME
@@ -376,25 +351,33 @@ def crear_excel_formato(ruta):
     wb.save(ruta)
     return ruta
 
-
 def guardar_registros(ruta, registros):
     """
     Escribe los registros del formulario en la fila de la tienda (columna B).
-    Caja 1 -> POS I, Caja 2 -> POS II. Cajas 3-5 y los equipos sin columna
-    (ej. teléfono de la caja 2) se anotan en OBSERVACIONES.
-    Devuelve la lista de tiendas no encontradas.
+    Autocompleta automáticamente el C. Costos y la Ciudad según la tienda seleccionada.
     """
     wb = openpyxl.load_workbook(ruta)
     ws = wb[SHEET_NAME] if SHEET_NAME in wb.sheetnames else wb.active
-    filas = {str(ws.cell(r, 2).value).strip().upper(): r
-             for r in range(FIRST_ROW, LAST_ROW + 1)}
+    
+    # Crear diccionario de referencia rápida: Tienda -> (Fila, C. Costos, Ciudad)
+    mapa_tiendas = {}
+    for idx, (cc, tienda, ciudad) in enumerate(TIENDAS):
+        r = FIRST_ROW + idx
+        mapa_tiendas[str(tienda).strip().upper()] = (r, cc, ciudad)
+        
     no_encontradas = []
 
     for reg in registros:
-        r = filas.get(str(reg.get("Oficina", "")).strip().upper())
-        if r is None:
+        nombre_oficina = str(reg.get("Oficina", "")).strip().upper()
+        if nombre_oficina not in mapa_tiendas:
             no_encontradas.append(reg.get("Oficina"))
             continue
+            
+        r, cc, ciudad = mapa_tiendas[nombre_oficina]
+        
+        # Autocompletar centro de costos y ciudad sin preguntar nada
+        ws[f"A{r}"] = cc
+        ws[f"C{r}"] = ciudad
 
         num = int(str(reg.get("Numero_Caja", "Caja 1")).split()[-1])
         mapa = MAPA_CAJAS.get(num, {})
