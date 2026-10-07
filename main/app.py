@@ -66,23 +66,23 @@ for i in range(1, int(cantidad_cajas) + 1):
     
     col1, col2 = st.columns(2)
     with col1:
-        pc_activo = st.text_input(f"Computador - Activo (Caja {i})", key=f"pc_act_{i}")
+        pc_activo = st.text_input(f"Computador - Activo Fijo (Caja {i})", key=f"pc_act_{i}")
         pc_estado = st.selectbox(f"Computador - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"pc_est_{i}")
         
-        tel_activo = st.text_input(f"Teléfono - Activo (Caja {i})", key=f"tel_act_{i}")
+        tel_activo = st.text_input(f"Teléfono - Activo Fijo (Caja {i})", key=f"tel_act_{i}")
         tel_estado = st.selectbox(f"Teléfono - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"tel_est_{i}")
         
-        bio_activo = st.text_input(f"Biométrico - Activo (Caja {i})", key=f"bio_act_{i}")
+        bio_activo = st.text_input(f"Biométrico - Activo Fijo (Caja {i})", key=f"bio_act_{i}")
         bio_estado = st.selectbox(f"Biométrico - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"bio_est_{i}")
 
     with col2:
-        lec_activo = st.text_input(f"Lector de Código - Activo (Caja {i})", key=f"lec_act_{i}")
+        lec_activo = st.text_input(f"Lector de Código - Activo Fijo (Caja {i})", key=f"lec_act_{i}")
         lec_estado = st.selectbox(f"Lector de Código - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"lec_est_{i}")
         
-        caj_activo = st.text_input(f"Cajón Monedero - Activo (Caja {i})", key=f"caj_act_{i}")
+        caj_activo = st.text_input(f"Cajón Monedero - Activo Fijo (Caja {i})", key=f"caj_act_{i}")
         caj_estado = st.selectbox(f"Cajón Monedero - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"caj_est_{i}")
         
-        imp_activo = st.text_input(f"Impresora POS - Activo (Caja {i})", key=f"imp_act_{i}")
+        imp_activo = st.text_input(f"Impresora POS - Activo Fijo (Caja {i})", key=f"imp_act_{i}")
         imp_estado = st.selectbox(f"Impresora POS - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"imp_est_{i}")
 
     # Guardar datos estructurados de esta caja
