@@ -46,6 +46,12 @@ EXCEL_FILE = "control_equipos_tecnologicos.xlsx"
 
 st.set_page_config(page_title="Control de Equipos Tecnológicos", layout="centered")
 
+# --- PANEL DE ADMINISTRADOR EN LA BARRA LATERAL (Protección de descarga) ---
+with st.sidebar:
+    st.header("🔒 Panel de Administrador")
+    password_ingresada = st.text_input("Contraseña de Descarga:", type="password")
+    PASSWORD_SECRETA = "Admin123*"  # Puedes cambiar esta contraseña por la que prefieras
+
 st.title("🖥️ Formulario de Control de Equipos Tecnológicos")
 st.write("Selecciona la oficina e ingresa la información de las cajas correspondientes.")
 
@@ -60,7 +66,7 @@ st.divider()
 # Diccionario para almacenar los datos de las cajas de forma temporal
 registros_cajas = []
 
-# Paso 3: Preguntas dinámicas por cada caja (Página / Sección por caja)
+# Paso 3: Preguntas dinámicas por cada caja
 for i in range(1, int(cantidad_cajas) + 1):
     st.subheader(f"📦 Configuración de la Caja #{i}")
     
@@ -68,52 +74,48 @@ for i in range(1, int(cantidad_cajas) + 1):
     with col1:
         pc_activo = st.text_input(f"Computador - Activo Fijo (Caja {i})", key=f"pc_act_{i}")
         mou_activo = st.text_input(f"Mouse - Marca (Caja {i})", key=f"mou_act_{i}")
-        
         tec_activo = st.text_input(f"Teclado - Marca (Caja {i})", key=f"tec_act_{i}")
         lec_activo = st.text_input(f"Lector de Código - Activo Fijo (Caja {i})", key=f"lec_act_{i}")
-        
         caj_activo = st.text_input(f"Cajón Monedero - Activo Fijo (Caja {i})", key=f"caj_act_{i}")
         tel_activo = st.text_input(f"Teléfono - Activo Fijo (Caja {i})", key=f"tel_act_{i}")
-        
         bio_activo = st.text_input(f"Biométrico - Activo Fijo (Caja {i})", key=f"bio_act_{i}")
         imp_activo = st.text_input(f"Impresora POS - Activo Fijo (Caja {i})", key=f"imp_act_{i}")
 
     with col2:
         pc_estado = st.selectbox(f"Computador - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"pc_est_{i}")
         mou_estado = st.selectbox(f"Mouse - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"mou_est_{i}")
-        
         tec_estado = st.selectbox(f"Teclado - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"tec_est_{i}")
         lec_estado = st.selectbox(f"Lector de Código - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"lec_est_{i}")
-        
         caj_estado = st.selectbox(f"Cajón Monedero - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"caj_est_{i}")
         tel_estado = st.selectbox(f"Teléfono - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"tel_est_{i}")
-        
         bio_estado = st.selectbox(f"Biométrico - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"bio_est_{i}")
         imp_estado = st.selectbox(f"Impresora POS - Estado (Caja {i})", ["BUENO", "REGULAR", "MALO", "N/A"], key=f"imp_est_{i}")
 
-    # Guardar datos estructurados de esta caja
+    # Guardar datos estructurados de esta caja con llaves únicas
     registros_cajas.append({
         "Fecha_Registro": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "Oficina": oficina_seleccionada,
-        
         "Numero_Caja": f"Caja {i}",
         "PC_Activo": pc_activo,
-        "Estado": pc_estado,
-        "Telefono_Activo": tel_activo,
-        "Estado": tel_estado,
-        "Biometrico_Activo": bio_activo,
-        
-        "Estado": bio_estado,
+        "PC_Estado": pc_estado,
+        "Mouse_Activo": mou_activo,
+        "Mouse_Estado": mou_estado,
+        "Teclado_Activo": tec_activo,
+        "Teclado_Estado": tec_estado,
         "Lector_Activo": lec_activo,
-        "Estado": lec_estado,
+        "Lector_Estado": lec_estado,
         "Cajon_Activo": caj_activo,
-        "Estado": caj_estado,
+        "Cajon_Estado": caj_estado,
+        "Telefono_Activo": tel_activo,
+        "Telefono_Estado": tel_estado,
+        "Biometrico_Activo": bio_activo,
+        "Biometrico_Estado": bio_estado,
         "Impresora_Activa": imp_activo,
-        "Estado": imp_estado
+        "Impresora_Estado": imp_estado
     })
     st.divider()
 
-# Botón para enviar y guardar en el Excel (disponible para todos los que llenen el formulario)
+# Botón para enviar y guardar en el Excel
 if st.button("💾 Guardar Información del Formulario", type="primary"):
     df_nuevo = pd.DataFrame(registros_cajas)
     
@@ -124,7 +126,7 @@ if st.button("💾 Guardar Información del Formulario", type="primary"):
         df_final = df_nuevo
         
     df_final.to_excel(EXCEL_FILE, index=False)
-    st.success("¡Datos guardados exitosamente!")
+    st.success("¡Datos guardados exitosamente en el Excel!")
 
 st.divider()
 
