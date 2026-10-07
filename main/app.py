@@ -1,11 +1,8 @@
 import os
 from datetime import datetime
-
 import streamlit as st
-
 from excel_formato import crear_excel_formato, guardar_registros
 
-# Lista de oficinas basada en tu reporte
 OFICINAS = [
     "RIVIERA ARMENIA",
     "RIVIERA BUENAVISTA BARRANQUILLA",
@@ -41,15 +38,19 @@ OFICINAS = [
     "RIVIERA SANTA MARTA",
     "RIVIERA VALLEDUPAR",
     "RIVIERA VILLAVICENCIO",
-    "RIVIERA YOPAL",
+    "RIVIERA YOPAL"
 ]
 
 ESTADOS = ["BUENO", "REGULAR", "MALO", "N/A"]
 EXCEL_FILE = "ESTADO_TIENDAS 2026.xlsx"
 
+# Asegurar que el Excel se cree vacío con el formato institucional si no existe
+if not os.path.exists(EXCEL_FILE):
+    crear_excel_formato(EXCEL_FILE)
+
 st.set_page_config(page_title="Control de Equipos Tecnológicos", layout="centered")
 
-# --- PANEL DE ADMINISTRADOR EN LA BARRA LATERAL (Protección de descarga) ---
+# --- PANEL DE ADMINISTRADOR EN LA BARRA LATERAL ---
 with st.sidebar:
     st.header("🔒 Panel de Administrador")
     password_ingresada = st.text_input("Contraseña de Descarga:", type="password")
@@ -58,7 +59,7 @@ with st.sidebar:
 st.title("🖥️ Formulario de Control de Equipos Tecnológicos")
 st.write("Selecciona la oficina e ingresa la información de las cajas correspondientes.")
 
-# Paso 1: Selección de Oficina
+# Paso 1: Selección de Oficina (Asocia automáticamente ciudad y centro de costos)
 oficina_seleccionada = st.selectbox("Seleccione la Oficina / Sucursal:", OFICINAS)
 
 # Paso 2: Cantidad de cajas (máximo 5)
@@ -68,10 +69,9 @@ cantidad_cajas = st.number_input(
 
 st.divider()
 
-# Lista para almacenar los datos de las cajas de forma temporal
 registros_cajas = []
 
-# Paso 3: Preguntas dinámicas por cada caja
+# Paso 3: Preguntas dinámicas página por página según cantidad de cajas
 for i in range(1, int(cantidad_cajas) + 1):
     st.subheader(f"📦 Configuración de la Caja #{i}")
 
@@ -123,17 +123,17 @@ for i in range(1, int(cantidad_cajas) + 1):
     })
     st.divider()
 
-# Botón para enviar y guardar en el Excel con formato institucional
+# Botón para enviar y sincronizar con el Excel
 if st.button("💾 Guardar Información del Formulario", type="primary"):
     if not os.path.exists(EXCEL_FILE):
-        crear_excel_formato(EXCEL_FILE)  # crea el Excel con el formato original
+        crear_excel_formato(EXCEL_FILE)
 
     no_encontradas = guardar_registros(EXCEL_FILE, registros_cajas)
 
     if no_encontradas:
-        st.warning(f"Estas tiendas no coinciden con la lista del Excel: {no_encontradas}")
+        st.warning(f"Estas tiendas no coinciden: {no_encontradas}")
     else:
-        st.success("¡Datos guardados exitosamente y sincronizados con el Excel!")
+        st.success("¡Datos guardados exitosamente en la tienda correspondiente y Excel actualizado!")
 
 st.divider()
 
@@ -150,6 +150,6 @@ if password_ingresada == PASSWORD_SECRETA:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
     else:
-        st.warning("Aún no hay registros guardados en el archivo Excel.")
+        st.warning("Aún no hay archivo generado.")
 else:
-    st.info("🔒 Introduce la contraseña correcta en la barra lateral para habilitar la descarga del archivo Excel.")
+    st.info("🔒 Introduce la contraseña correcta en la barra lateral para habilitar la descarga.")
