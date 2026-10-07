@@ -258,9 +258,9 @@ def _cuerpo(ws):
             if cl(col) in ("A", "B", "C") or cl(col) in INICIO_BLOQUE:
                 _bordes(c, left=MED)
         _bordes(ws.cell(r, 2), right=MED)
-        ws.cell(r, 1, cc)
-        ws.cell(r, 2, tienda)
-        ws.cell(r, 3, ciudad)
+        ws.cell(r, 1, str(cc))
+        ws.cell(r, 2, str(tienda))
+        ws.cell(r, 3, str(ciudad))
 
         ws.merge_cells(f"{OBS_INI}{r}:{OBS_FIN}{r}")
         for c in _rango(ws, OBS_INI, OBS_FIN, r):
@@ -355,7 +355,7 @@ def crear_excel_formato(ruta):
 def guardar_registros(ruta, registros):
     """
     Escribe los registros del formulario en la fila exacta de la tienda.
-    Asegura que el Centro de Costos (Col A) y la Ciudad (Col C) queden grabados correctamente.
+    Garantiza que el Centro de Costos (Col A) y la Ciudad (Col C) se escriban correctamente.
     """
     wb = openpyxl.load_workbook(ruta)
     ws = wb[SHEET_NAME] if SHEET_NAME in wb.sheetnames else wb.active
@@ -376,9 +376,9 @@ def guardar_registros(ruta, registros):
             
         r, cc, ciudad = mapa_tiendas[nombre_oficina]
         
-        # GARANTIZAR que el C. Costos y la Ciudad se guarden siempre en sus columnas
-        ws[f"A{r}"] = cc
-        ws[f"C{r}"] = ciudad
+        # FORZAR explícitamente el centro de costos en la columna A y la ciudad en la columna C
+        ws.cell(r, 1, value=cc)
+        ws.cell(r, 3, value=ciudad)
 
         num = int(str(reg.get("Numero_Caja", "Caja 1")).split()[-1])
         mapa = MAPA_CAJAS.get(num, {})
