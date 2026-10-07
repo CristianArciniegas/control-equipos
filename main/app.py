@@ -50,7 +50,7 @@ st.set_page_config(page_title="Control de Equipos Tecnológicos", layout="center
 with st.sidebar:
     st.header("🔒 Panel de Administrador")
     password_ingresada = st.text_input("Contraseña de Descarga:", type="password")
-    PASSWORD_SECRETA = "Admin123*"  # Puedes cambiar esta contraseña por la que prefieras
+    PASSWORD_SECRETA = "Rivier@25*"  # Puedes cambiar esta contraseña por la que prefieras
 
 st.title("🖥️ Formulario de Control de Equipos Tecnológicos")
 st.write("Selecciona la oficina e ingresa la información de las cajas correspondientes.")
@@ -59,7 +59,7 @@ st.write("Selecciona la oficina e ingresa la información de las cajas correspon
 oficina_seleccionada = st.selectbox("Seleccione la Oficina / Sucursal:", OFICINAS)
 
 # Paso 2: Cantidad de cajas (máximo 5)
-cantidad_cajas = st.number_input("¿Cuántas cajas va a registrar? (Máximo 5):", min_value=1, max_value=5, value=1, step=1)
+cantidad_cajas = st.number_input("¿Cantidad cajas en el punto? (Máximo 5):", min_value=1, max_value=5, value=1, step=1)
 
 st.divider()
 
