@@ -113,11 +113,10 @@ for i in range(1, int(cantidad_cajas) + 1):
     })
     st.divider()
 
-# Botón para enviar y alimentar el Excel
-if st.button("💾 Guardar Información en Excel", type="primary"):
+# Botón para enviar y guardar en el Excel (disponible para todos los que llenen el formulario)
+if st.button("💾 Guardar Información del Formulario", type="primary"):
     df_nuevo = pd.DataFrame(registros_cajas)
     
-    # Si ya existe el archivo, se le añade la nueva información (acumulativo)
     if os.path.exists(EXCEL_FILE):
         df_existente = pd.read_excel(EXCEL_FILE)
         df_final = pd.concat([df_existente, df_nuevo], ignore_index=True)
@@ -125,13 +124,23 @@ if st.button("💾 Guardar Información en Excel", type="primary"):
         df_final = df_nuevo
         
     df_final.to_excel(EXCEL_FILE, index=False)
-    st.success("¡Datos guardados exitosamente en el archivo de Excel!")
-    
-    # Opción para descargar el Excel directamente
-    with open(EXCEL_FILE, "rb") as f:
-        st.download_button(
-            label="📥 Descargar archivo Excel actualizado",
-            data=f,
-            file_name="control_equipos_tecnologicos.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+    st.success("¡Datos guardados exitosamente!")
+
+st.divider()
+
+# --- ZONA RESTRINGIDA DE DESCARGA ---
+st.subheader("📥 Zona de Descarga de Reportes")
+if password_ingresada == PASSWORD_SECRETA:
+    st.success("Acceso de administrador concedido.")
+    if os.path.exists(EXCEL_FILE):
+        with open(EXCEL_FILE, "rb") as f:
+            st.download_button(
+                label="📥 Descargar archivo Excel completo",
+                data=f,
+                file_name="control_equipos_tecnologicos.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+    else:
+        st.warning("Aún no hay registros guardados en el archivo Excel.")
+else:
+    st.info("🔒 Introduce la contraseña correcta en la barra lateral para habilitar la descarga del archivo Excel.")
