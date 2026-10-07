@@ -132,7 +132,7 @@ st.divider()
 
 # --- ZONA RESTRINGIDA DE DESCARGA ---
 st.subheader("📥 Zona de Descarga de Reportes")
-if password_ingresada == Riviera25:
+if password_ingresada == "Rivier@25":
     st.success("Acceso de administrador concedido.")
     if os.path.exists(EXCEL_FILE):
         with open(EXCEL_FILE, "rb") as f:
