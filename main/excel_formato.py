@@ -79,6 +79,7 @@ ANCHOS = {
     "AV": 17.71, "AW": 18.71, "AX": 26.71,
 }
 
+# Tabla exacta de oficinas, ciudades y centros de costos
 TIENDAS = [
     ("8B", "RIVIERA ARMENIA", "ARMENIA"),
     (13, "RIVIERA BUENAVISTA BARRANQUILLA", "BARRANQUILLA"),
@@ -116,7 +117,7 @@ TIENDAS = [
     (40, "RIVIERA VILLAVICENCIO", "VILLAVICENCIO"),
     ("7D", "RIVIERA YOPAL", "YOPAL"),
 ]
-LAST_ROW = FIRST_ROW + len(TIENDAS) - 1          # 42
+LAST_ROW = FIRST_ROW + len(TIENDAS) - 1
 ROW_BUENO, ROW_REGULAR, ROW_MALO = LAST_ROW + 1, LAST_ROW + 2, LAST_ROW + 3
 
 MAPA_CAJAS = {
@@ -353,17 +354,17 @@ def crear_excel_formato(ruta):
 
 def guardar_registros(ruta, registros):
     """
-    Escribe los registros del formulario en la fila de la tienda (columna B).
-    Autocompleta automáticamente el C. Costos y la Ciudad según la tienda seleccionada.
+    Escribe los registros del formulario en la fila exacta de la tienda.
+    Asegura que el Centro de Costos (Col A) y la Ciudad (Col C) queden grabados correctamente.
     """
     wb = openpyxl.load_workbook(ruta)
     ws = wb[SHEET_NAME] if SHEET_NAME in wb.sheetnames else wb.active
     
-    # Crear diccionario de referencia rápida: Tienda -> (Fila, C. Costos, Ciudad)
+    # Mapeo exacto de cada tienda con su fila, C. Costos y Ciudad
     mapa_tiendas = {}
     for idx, (cc, tienda, ciudad) in enumerate(TIENDAS):
         r = FIRST_ROW + idx
-        mapa_tiendas[str(tienda).strip().upper()] = (r, cc, ciudad)
+        mapa_tiendas[str(tienda).strip().upper()] = (r, str(cc), str(ciudad))
         
     no_encontradas = []
 
@@ -375,7 +376,7 @@ def guardar_registros(ruta, registros):
             
         r, cc, ciudad = mapa_tiendas[nombre_oficina]
         
-        # Autocompletar centro de costos y ciudad sin preguntar nada
+        # GARANTIZAR que el C. Costos y la Ciudad se guarden siempre en sus columnas
         ws[f"A{r}"] = cc
         ws[f"C{r}"] = ciudad
 
