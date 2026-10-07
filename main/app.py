@@ -95,19 +95,21 @@ for i in range(1, int(cantidad_cajas) + 1):
     registros_cajas.append({
         "Fecha_Registro": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "Oficina": oficina_seleccionada,
+        
         "Numero_Caja": f"Caja {i}",
         "PC_Activo": pc_activo,
-        "PC_Estado": pc_estado,
+        "Estado": pc_estado,
         "Telefono_Activo": tel_activo,
-        "Telefono_Estado": tel_estado,
+        "Estado": tel_estado,
         "Biometrico_Activo": bio_activo,
-        "Biometrico_Estado": bio_estado,
+        
+        "Estado": bio_estado,
         "Lector_Activo": lec_activo,
-        "Lector_Estado": lec_estado,
+        "Estado": lec_estado,
         "Cajon_Activo": caj_activo,
-        "Cajon_Estado": caj_estado,
+        "Estado": caj_estado,
         "Impresora_Activa": imp_activo,
-        "Impresora_Estado": imp_estado
+        "Estado": imp_estado
     })
     st.divider()
 
